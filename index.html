@@ -687,43 +687,93 @@
 
             if (!standardPose || !userPose) return;
 
-            // 計算關鍵點的相似度
-            let similarity = 0;
-            let validPoints = 0;
+            // MediaPipe Pose 骨骼关节点定义（排除面部和手部细节）
+            const SKELETAL_KEYPOINTS = {
+                // 上半身主要关节点
+                LEFT_SHOULDER: 11,
+                RIGHT_SHOULDER: 12,
+                LEFT_ELBOW: 13,
+                RIGHT_ELBOW: 14,
+                LEFT_WRIST: 15,
+                RIGHT_WRIST: 16,
+                // 下半身主要关节点
+                LEFT_HIP: 23,
+                RIGHT_HIP: 24,
+                LEFT_KNEE: 25,
+                RIGHT_KNEE: 26,
+                LEFT_ANKLE: 27,
+                RIGHT_ANKLE: 28,
+                LEFT_HEEL: 29,
+                RIGHT_HEEL: 30,
+                LEFT_FOOT_INDEX: 31,
+                RIGHT_FOOT_INDEX: 32
+            };
 
-            // 選擇主要關鍵點進行比較
-            const keyPoints = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28];
-            
-            keyPoints.forEach(pointIndex => {
-                if (standardPose[pointIndex] && userPose[pointIndex]) {
-                    const standardPoint = standardPose[pointIndex];
-                    const userPoint = userPose[pointIndex];
+            // 关键点权重配置（不同关节点的重要性不同）
+            const KEYPOINT_WEIGHTS = {
+                // 核心关节点权重更高
+                [SKELETAL_KEYPOINTS.LEFT_SHOULDER]: 1.2,
+                [SKELETAL_KEYPOINTS.RIGHT_SHOULDER]: 1.2,
+                [SKELETAL_KEYPOINTS.LEFT_HIP]: 1.2,
+                [SKELETAL_KEYPOINTS.RIGHT_HIP]: 1.2,
+                // 肘部和膝盖权重中等
+                [SKELETAL_KEYPOINTS.LEFT_ELBOW]: 1.0,
+                [SKELETAL_KEYPOINTS.RIGHT_ELBOW]: 1.0,
+                [SKELETAL_KEYPOINTS.LEFT_KNEE]: 1.0,
+                [SKELETAL_KEYPOINTS.RIGHT_KNEE]: 1.0,
+                // 手腕和脚踝权重较低
+                [SKELETAL_KEYPOINTS.LEFT_WRIST]: 0.8,
+                [SKELETAL_KEYPOINTS.RIGHT_WRIST]: 0.8,
+                [SKELETAL_KEYPOINTS.LEFT_ANKLE]: 0.8,
+                [SKELETAL_KEYPOINTS.RIGHT_ANKLE]: 0.8,
+                // 脚部关键点权重最低
+                [SKELETAL_KEYPOINTS.LEFT_HEEL]: 0.6,
+                [SKELETAL_KEYPOINTS.RIGHT_HEEL]: 0.6,
+                [SKELETAL_KEYPOINTS.LEFT_FOOT_INDEX]: 0.6,
+                [SKELETAL_KEYPOINTS.RIGHT_FOOT_INDEX]: 0.6
+            };
+
+            let totalWeightedSimilarity = 0;
+            let totalWeight = 0;
+
+            // 遍历所有骨骼关节点
+            Object.values(SKELETAL_KEYPOINTS).forEach(pointIndex => {
+                const standardPoint = standardPose[pointIndex];
+                const userPoint = userPose[pointIndex];
+                
+                // 检查关键点是否存在且可见度足够
+                if (standardPoint && userPoint && 
+                    standardPoint.visibility > 0.5 && userPoint.visibility > 0.5) {
                     
-                    // 計算歐幾里得距離
+                    // 计算 3D 欧几里得距离
                     const distance = Math.sqrt(
                         Math.pow(standardPoint.x - userPoint.x, 2) +
                         Math.pow(standardPoint.y - userPoint.y, 2) +
                         Math.pow(standardPoint.z - userPoint.z, 2)
                     );
                     
-                    // 轉換為相似度分數（距離越小，相似度越高）
-                    const pointSimilarity = Math.max(0, 100 - distance * 100);
-                    similarity += pointSimilarity;
-                    validPoints++;
+                    // 将距离转换为相似度分数 (0-100)
+                    // 使用指数衰减函数，使得小距离获得更高分数
+                    const similarity = 100 * Math.exp(-distance * 5);
+                    
+                    // 应用权重
+                    const weight = KEYPOINT_WEIGHTS[pointIndex] || 1.0;
+                    totalWeightedSimilarity += similarity * weight;
+                    totalWeight += weight;
                 }
             });
 
-            if (validPoints > 0) {
-                const frameScore = similarity / validPoints;
+            if (totalWeight > 0) {
+                const frameScore = totalWeightedSimilarity / totalWeight;
                 totalScore += frameScore;
                 frameCount++;
                 
-                // 更新顯示的平均得分
+                // 更新显示的平均得分
                 const averageScore = Math.round(totalScore / frameCount);
                 document.getElementById('currentScore').textContent = averageScore;
             }
         }
-
+        
         // 遊戲控制
         function toggleGame() {
             if (gameState === 'stopped') {
