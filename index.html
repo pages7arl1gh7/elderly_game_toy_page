@@ -198,13 +198,19 @@
 
         .standard-video {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 25%;
-            height: 25%;
+            top: 15px;
+            left: 15px;
+            width: 40%;
+            height: 40%;
             border: 3px solid var(--secondary-color);
             border-radius: 10px;
             z-index: 10;
+            object-fit: cover;
+            /* 防止 Safari 自动全屏播放 */
+            -webkit-playsinline: true;
+            /* 确保视频不会超出容器 */
+            max-width: 300px;
+            max-height: 200px;
         }
 
         .user-video {
@@ -282,22 +288,16 @@
                 padding: 10px;
             }
             
+            .standard-video {
+                width: 50%;
+                height: 35%;
+                max-width: 200px;
+                max-height: 150px;
+            }
+            
             .modal-content {
                 margin: 5% auto;
                 padding: 20px;
-            }
-            
-            .btn {
-                padding: 12px 25px;
-                font-size: 16px;
-            }
-            
-            .score-value {
-                font-size: 36px;
-            }
-            
-            .countdown {
-                font-size: 80px;
             }
         }
 
@@ -415,7 +415,7 @@
 
             <!-- 視訊顯示區域 -->
             <div class="video-container" id="videoContainer">
-                <video id="standardVideo" class="standard-video" muted loop style="display: none;">
+                <video id="standardVideo" class="standard-video" muted loop playsinline webkit-playsinline x5-playsinline style="display: none;">
                     <source src="easy.mp4" type="video/mp4">
                 </video>
                 <video id="userVideo" class="user-video" autoplay muted playsinline></video>
