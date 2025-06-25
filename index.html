@@ -1,934 +1,871 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中老年平衡感訓練遊戲</title>
+    <title>平衡感调节小游戏</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 老年人友好的配色方案 */
-        :root {
-            --primary-color: #2c5282; /* 深藍色 */
-            --secondary-color: #4a90e2; /* 淺藍色 */
-            --accent-color: #f7fafc; /* 淺灰白色 */
-            --text-color: #2d3748; /* 深灰色 */
-            --bg-color: #f8fafc; /* 淺背景色 */
-            --border-color: #e2e8f0; /* 邊框色 */
-            --success-color: #48bb78; /* 成功綠色 */
-            --warning-color: #ed8936; /* 警告橙色 */
-            --error-color: #f56565; /* 錯誤紅色 */
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Microsoft JhengHei', 'PMingLiU', 'SimHei', Arial, sans-serif;
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #FFF7ED; /* Updated: Warm, light peach background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            margin: 0;
+            padding: 1rem; /* Add some padding around the content */
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
-
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 90%; /* Responsive width */
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            overflow: hidden; /* Hide overflow for rounded corners */
+            color: #0A2E50; /* Updated: Deep blue font color for general text */
         }
-
-        /* 語言切換器 */
-        .language-selector {
+        /* Full screen modal overlay */
+        .modal-overlay {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .language-selector select {
-            padding: 10px 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background-color: white;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-
-        /* 模態框樣式 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-
         .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            color: #0A2E50; /* Updated: Deep blue font color for modal content */
         }
-
-        .modal h2 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: bold;
+        /* Age-friendly text sizing */
+        .text-xl-responsive {
+            font-size: 1.25rem; /* Default for smaller screens */
         }
-
-        .modal p {
-            font-size: 18px;
-            line-height: 1.8;
-            margin-bottom: 25px;
-            text-align: left;
+        @media (min-width: 640px) { /* sm breakpoint */
+            .text-xl-responsive {
+                font-size: 1.5rem;
+            }
         }
-
-        .btn {
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 10px;
-            transition: all 0.3s ease;
+        @media (min-width: 768px) { /* md breakpoint */
+            .text-xl-responsive {
+                font-size: 1.875rem;
+            }
         }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .text-xl-responsive {
+                font-size: 2.25rem;
+            }
         }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background-color: var(--border-color);
-            color: var(--text-color);
-        }
-
-        /* 表單樣式 */
-        .form-group {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 18px;
-            color: var(--primary-color);
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background-color: white;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-        }
-
-        /* 遊戲介面樣式 */
-        .game-interface {
-            display: none;
-        }
-
-        .game-controls {
-            background-color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .difficulty-selector {
-            margin-bottom: 20px;
-        }
-
-        .difficulty-selector label {
-            font-weight: bold;
-            font-size: 20px;
-            color: var(--primary-color);
-            margin-right: 15px;
-        }
-
-        .difficulty-selector select {
-            padding: 12px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background-color: white;
-        }
-
-        /* 視訊區域 */
+        /* Specific styling for video and canvas */
         .video-container {
             position: relative;
-            background-color: #000;
-            border-radius: 15px;
+            width: 100%;
+            padding-bottom: 75%; /* 4:3 Aspect Ratio (change as needed) */
+            height: 0;
             overflow: hidden;
-            margin-bottom: 25px;
-            min-height: 400px;
+            background-color: #333; /* Dark background for video area */
+            border-radius: 0.5rem; /* Slightly rounded corners for video */
         }
-
-        .standard-video {
+        .video-container video, .video-container canvas {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            width: 40%;
-            height: 40%;
-            border: 3px solid var(--secondary-color);
-            border-radius: 10px;
-            z-index: 10;
-            object-fit: cover;
-            /* 防止 Safari 自动全屏播放 */
-            -webkit-playsinline: true;
-            /* 确保视频不会超出容器 */
-            max-width: 300px;
-            max-height: 200px;
-        }
-
-        .user-video {
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 400px;
-            object-fit: cover;
+            height: 100%;
+            object-fit: cover; /* Ensures video covers the area */
         }
-
-        .countdown {
+        /* Specific styling for the small standard video */
+        .standard-video-small {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 120px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            z-index: 20;
-        }
-
-        /* 分數顯示 */
-        .score-display {
-            background-color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .score-display h3 {
-            color: var(--primary-color);
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .score-value {
-            font-size: 48px;
-            font-weight: bold;
-            color: var(--success-color);
-        }
-
-        /* 遊戲控制按鈕 */
-        .game-control-btn {
-            width: 100%;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .game-control-btn:hover {
-            background-color: #38a169;
-            transform: translateY(-2px);
-        }
-
-        .game-control-btn:disabled {
-            background-color: #a0aec0;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* 響應式設計 */
-        @media (max-width: 768px) {
-            body {
-                font-size: 16px;
-            }
-            
-            .container {
-                padding: 10px;
-            }
-            
-            .standard-video {
-                width: 50%;
-                height: 35%;
-                max-width: 200px;
-                max-height: 150px;
-            }
-            
-            .modal-content {
-                margin: 5% auto;
-                padding: 20px;
-            }
-        }
-
-        /* 隱藏類 */
-        .hidden {
-            display: none !important;
-        }
-
-        /* 載入動畫 */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            top: 0.5rem;
+            left: 0.5rem;
+            width: 25%; /* Approximately 1/4 width */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 10; /* Ensure it's above the main video/canvas */
+            background-color: #555; /* Placeholder background */
         }
     </style>
 </head>
 <body>
-    <!-- 語言選擇器 -->
-    <div class="language-selector">
-        <select id="languageSelect" onchange="changeLanguage()">
-            <option value="zh">中文</option>
-            <option value="en">English</option>
-        </select>
-    </div>
+    <!-- Main application container -->
+    <div id="app" class="container p-6 sm:p-8 md:p-10 lg:p-12">
 
-    <!-- 免責聲明模態框 -->
-    <div id="disclaimerModal" class="modal">
-        <div class="modal-content">
-            <h2 data-translate="disclaimer_title">免責聲明</h2>
-            <p data-translate="disclaimer_text">
-                本網站的內容不構成專業的醫療建議，請根據自己的身體狀況選擇適當的活動，本網站提出的建議僅作為參考並且不構成任何醫療建議，如果感到身體不適，請及時就醫。本網站不會收集您的個人數據也不會保存任何視頻，您在本網站中輸入的任何信息都只是為了推薦更加適合您的小遊戲而使用，它們不會被上傳到我們的伺服器。
-            </p>
-            <button class="btn btn-primary" onclick="acceptDisclaimer()" data-translate="accept">我同意</button>
-            <button class="btn btn-secondary" onclick="declineDisclaimer()" data-translate="decline">不同意</button>
+        <!-- Language Selector (Top Right) -->
+        <div class="absolute top-4 right-4 z-50">
+            <select id="language-selector" class="p-2 rounded-md bg-blue-100 border border-blue-300 text-blue-800 font-bold text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+            </select>
         </div>
-    </div>
 
-    <!-- 用戶信息輸入模態框 -->
-    <div id="userInfoModal" class="modal">
-        <div class="modal-content">
-            <h2 data-translate="user_info_title">請輸入您的基本信息</h2>
-            <form id="userInfoForm">
-                <div class="form-group">
-                    <label for="age" data-translate="age_label">年齡：</label>
-                    <input type="number" id="age" name="age" min="1" max="120" required>
+        <!-- Background Music Player -->
+        <audio id="background-music" loop preload="auto">
+            <!-- 替换为您的背景音乐文件路径，例如: <source src="path/to/your/soothing_music.mp3" type="audio/mpeg"> -->
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+            您的浏览器不支持音频元素。
+        </audio>
+        <!-- Music Control Button -->
+        <div class="absolute top-4 left-4 z-50">
+            <button id="music-toggle-button" class="p-2 rounded-full bg-blue-500 text-white shadow-lg transition duration-300 ease-in-out hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                🎵 播放音乐
+            </button>
+        </div>
+
+        <!-- Disclaimer Modal -->
+        <div id="disclaimer-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-blue-700" data-lang-key="disclaimerTitle">免责声明</h2>
+                <p class="text-xl-responsive leading-relaxed mb-4" data-lang-key="disclaimerText1">
+                    本网页提供的小游戏旨在帮助中老年人调节平衡感，但并非医疗建议。请您务必根据自身身体状况和医生的指导选择合适的活动。
+                </p>
+                <p class="text-xl-responsive leading-relaxed mb-4" data-lang-key="disclaimerText2">
+                    所有内容仅供参考，不构成任何医疗诊断或治疗建议。如果您感到身体不适，请立即停止活动并及时就医。
+                </p>
+                <p class="text-xl-responsive leading-relaxed mb-6" data-lang-key="disclaimerText3">
+                    本应用不收集任何个人数据，不保存您的视频录像。您输入的信息仅用于游戏推荐，不会上传至服务器。
+                </p>
+                <button id="agree-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 text-xl-responsive" data-lang-key="agreeButton">
+                    我已阅读并同意
+                </button>
+            </div>
+        </div>
+
+        <!-- User Information Page -->
+        <div id="user-info-page" class="hidden text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-blue-700" data-lang-key="userInfoTitle">请提供您的信息</h2>
+            <form id="user-info-form" class="space-y-6 max-w-md mx-auto">
+                <div>
+                    <label for="age" class="block text-xl-responsive font-medium mb-2" data-lang-key="ageLabel">年龄 (岁):</label>
+                    <input type="number" id="age" name="age" min="1" max="120" required
+                           class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xl-responsive">
                 </div>
-                <div class="form-group">
-                    <label for="gender" data-translate="gender_label">性別：</label>
-                    <select id="gender" name="gender" required>
-                        <option value="" data-translate="select_gender">請選擇</option>
-                        <option value="male" data-translate="male">男</option>
-                        <option value="female" data-translate="female">女</option>
+                <div>
+                    <label for="gender" class="block text-xl-responsive font-medium mb-2" data-lang-key="genderLabel">性别:</label>
+                    <select id="gender" name="gender" required
+                            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xl-responsive">
+                        <option value="" disabled selected data-lang-key="selectGender">请选择</option>
+                        <option value="male" data-lang-key="male">男</option>
+                        <option value="female" data-lang-key="female">女</option>
+                        <option value="other" data-lang-key="other">其他</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="height" data-translate="height_label">身高（公分）：</label>
-                    <input type="number" id="height" name="height" min="100" max="250" required>
+                <div>
+                    <label for="weight" class="block text-xl-responsive font-medium mb-2" data-lang-key="weightLabel">体重 (公斤):</label>
+                    <input type="number" id="weight" name="weight" min="1" max="300" step="0.1" required
+                           class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xl-responsive">
                 </div>
-                <div class="form-group">
-                    <label for="weight" data-translate="weight_label">體重（公斤）：</label>
-                    <input type="number" id="weight" name="weight" min="30" max="200" required>
-                </div>
-                <button type="submit" class="btn btn-primary" data-translate="start_game">開始遊戲</button>
+                <!-- Assuming a default height for BMI calculation. In a real app, you might ask for height -->
+                <p class="text-sm text-gray-500" data-lang-key="heightAssumption">
+                    *身高将默认按1.7米计算BMI。
+                </p>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 text-xl-responsive" data-lang-key="submitInfo">
+                    提交并开始游戏
+                </button>
             </form>
         </div>
-    </div>
 
-    <!-- 遊戲結果模態框 -->
-    <div id="gameResultModal" class="modal">
-        <div class="modal-content">
-            <h2 data-translate="game_result_title">遊戲結果</h2>
-            <div class="score-display">
-                <h3 data-translate="final_score">最終得分</h3>
-                <div class="score-value" id="finalScore">0</div>
-            </div>
-            <div id="nutritionAdvice">
-                <h3 data-translate="nutrition_advice_title">營養建議</h3>
-                <p id="nutritionAdviceText"></p>
-            </div>
-            <button class="btn btn-primary" onclick="restartGame()" data-translate="play_again">再玩一次</button>
-        </div>
-    </div>
+        <!-- Main Game Page (initially hidden) -->
+        <div id="game-page" class="hidden">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-blue-700 text-center" data-lang-key="gameTitle">平衡感挑战</h2>
 
-    <!-- 主遊戲介面 -->
-    <div class="container">
-        <div class="game-interface" id="gameInterface">
-            <h1 data-translate="game_title">中老年平衡感訓練遊戲</h1>
-            
-            <!-- 遊戲控制區域 -->
-            <div class="game-controls">
-                <div class="difficulty-selector">
-                    <label for="difficultySelect" data-translate="difficulty_label">遊戲難度：</label>
-                    <select id="difficultySelect" onchange="changeDifficulty()">
-                        <option value="easy" data-translate="easy">簡單</option>
-                        <option value="medium" data-translate="medium">中等</option>
-                        <option value="hard" data-translate="hard">困難</option>
+            <!-- Difficulty Selector -->
+            <div class="flex flex-col sm:flex-row justify-center items-center mb-6 space-y-4 sm:space-y-0 sm:space-x-8">
+                <div>
+                    <label for="difficulty-selector" class="block text-xl-responsive font-medium mb-2" data-lang-key="difficultyLabel">选择难度:</label>
+                    <select id="difficulty-selector" class="p-3 rounded-md bg-blue-100 border border-blue-300 text-blue-800 font-bold text-xl-responsive focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="high" data-lang-key="difficultyHigh">高</option>
+                        <option value="mid" data-lang-key="difficultyMid">中</option>
+                        <option value="low" data-lang-key="difficultyLow">低</option>
                     </select>
                 </div>
-                
-                <!-- 分數顯示 -->
-                <div class="score-display">
-                    <h3 data-translate="current_score">當前平均得分</h3>
-                    <div class="score-value" id="currentScore">0</div>
+                <!-- Average Score Display -->
+                <div class="text-center">
+                    <p class="text-xl-responsive font-medium" data-lang-key="averageScoreLabel">平均得分:</p>
+                    <p id="average-score" class="text-4xl font-extrabold text-green-600">0</p>
                 </div>
             </div>
 
-            <!-- 視訊顯示區域 -->
-            <div class="video-container" id="videoContainer">
-                <video id="standardVideo" class="standard-video" muted loop playsinline webkit-playsinline x5-playsinline style="display: none;">
-                    <source src="easy.mp4" type="video/mp4">
+
+            <!-- Video and Canvas Area -->
+            <div class="video-container mb-6">
+                <!-- Standard Game Action Video (Placeholder for hard.mp4, mid.mp4, easy.mp4) -->
+                <video id="standard-video" class="standard-video-small border-4 border-white" loop muted>
+                    <!-- Actual video sources will be set by JavaScript based on difficulty -->
+                    <source src="https://placehold.co/320x240/007bff/ffffff?text=Standard+Video" type="video/mp4">
+                    您的浏览器不支持视频标签。
                 </video>
-                <video id="userVideo" class="user-video" autoplay muted playsinline></video>
-                <canvas id="userCanvas" class="user-video" style="display: none;"></canvas>
-                <div id="countdown" class="countdown" style="display: none;"></div>
+                <!-- User Webcam Video -->
+                <video id="user-video" autoplay playsinline muted></video>
+                <!-- Canvas for MediaPipe drawing -->
+                <canvas id="pose-canvas"></canvas>
+
+                <!-- Countdown Overlay -->
+                <div id="countdown-overlay" class="absolute inset-0 bg-black bg-opacity-70 flex justify-center items-center text-white text-9xl font-bold hidden">3</div>
             </div>
 
-            <!-- 遊戲控制按鈕 -->
-            <button id="gameControlBtn" class="game-control-btn" onclick="toggleGame()" data-translate="start_game">開始遊戲</button>
+            <!-- Start/End Button -->
+            <div class="text-center">
+                <button id="start-end-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 text-2xl-responsive" data-lang-key="startButton">
+                    开始
+                </button>
+            </div>
         </div>
+
+        <!-- Game End Feedback Modal -->
+        <div id="game-end-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-blue-700" data-lang-key="gameEndTitle">游戏结束！</h2>
+                <p class="text-xl-responsive leading-relaxed mb-4" data-lang-key="finalScoreLabel">您的最终分数是:</p>
+                <p id="final-score" class="text-6xl font-extrabold text-purple-700 mb-6">0</p>
+                <h3 class="text-2xl md:text-3xl font-bold mb-4 text-gray-700" data-lang-key="nutritionAdviceTitle">营养补充建议:</h3>
+                <p id="nutrition-advice" class="text-xl-responsive leading-relaxed mb-6"></p>
+                <button id="restart-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 text-xl-responsive" data-lang-key="restartButton">
+                    再玩一次
+                </button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- MediaPipe 和其他腳本 -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+    <!-- MediaPipe Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675037146/pose.js" crossorigin="anonymous"></script>
 
-    <script>
-        // 多語言支持
+    <script type="module">
+        // ================================================================
+        // Global Variables and DOM Elements
+        // ================================================================
+        const disclaimerModal = document.getElementById('disclaimer-modal');
+        const agreeButton = document.getElementById('agree-button');
+        const userInfoPage = document.getElementById('user-info-page');
+        const userInfoForm = document.getElementById('user-info-form');
+        const gamePage = document.getElementById('game-page');
+        const languageSelector = document.getElementById('language-selector');
+        const standardVideo = document.getElementById('standard-video');
+        const userVideo = document.getElementById('user-video');
+        const poseCanvas = document.getElementById('pose-canvas');
+        const poseCanvasCtx = poseCanvas.getContext('2d');
+        const startEndButton = document.getElementById('start-end-button');
+        const countdownOverlay = document.getElementById('countdown-overlay');
+        const averageScoreDisplay = document.getElementById('average-score');
+        const difficultySelector = document.getElementById('difficulty-selector');
+        const gameEndModal = document.getElementById('game-end-modal');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const nutritionAdvice = document.getElementById('nutrition-advice');
+        const restartButton = document.getElementById('restart-button');
+        const backgroundMusic = document.getElementById('background-music');
+        const musicToggleButton = document.getElementById('music-toggle-button');
+
+        let pose; // MediaPipe Pose object
+        let camera; // MediaPipe Camera object
+        let gameRunning = false;
+        let countdownValue = 3;
+        let countdownInterval;
+        let totalScore = 0;
+        let frameCount = 0;
+        let currentDifficulty = 'mid'; // Default difficulty
+
+        // Placeholder for user info
+        let userInfo = {
+            age: 0,
+            gender: '',
+            weight: 0,
+            bmi: 0,
+        };
+
+        // Standard video paths (placeholders - replace with actual video URLs)
+        const standardVideoSources = {
+            high: "https://placehold.co/320x240/007bff/ffffff?text=Hard+Video", // Replace with actual hard.mp4
+            mid: "https://placehold.co/320x240/28a745/ffffff?text=Medium+Video", // Replace with actual mid.mp4
+            low: "https://placehold.co/320x240/dc3545/ffffff?text=Easy+Video" // Replace with actual easy.mp4
+        };
+
+        // ================================================================
+        // Localization (Multi-language)
+        // ================================================================
         const translations = {
             zh: {
-                disclaimer_title: "免責聲明",
-                disclaimer_text: "本網站的內容不構成專業的醫療建議，請根據自己的身體狀況選擇適當的活動，本網站提出的建議僅作為參考並且不構成任何醫療建議，如果感到身體不適，請及時就醫。本網站不會收集您的個人數據也不會保存任何視頻，您在本網站中輸入的任何信息都只是為了推薦更加適合您的小遊戲而使用，它們不會被上傳到我們的伺服器。",
-                accept: "我同意",
-                decline: "不同意",
-                user_info_title: "請輸入您的基本信息",
-                age_label: "年齡：",
-                gender_label: "性別：",
-                select_gender: "請選擇",
+                disclaimerTitle: "免责声明",
+                disclaimerText1: "本网页提供的小游戏旨在帮助中老年人调节平衡感，但并非医疗建议。请您务必根据自身身体状况和医生的指导选择合适的活动。",
+                disclaimerText2: "所有内容仅供参考，不构成任何医疗诊断或治疗建议。如果您感到身体不适，请立即停止活动并及时就医。",
+                disclaimerText3: "本应用不收集任何个人数据，不保存您的视频录像。您输入的信息仅用于游戏推荐，不会上传至服务器。",
+                agreeButton: "我已阅读并同意",
+                userInfoTitle: "请提供您的信息",
+                ageLabel: "年龄 (岁):",
+                genderLabel: "性别:",
+                selectGender: "请选择",
                 male: "男",
                 female: "女",
-                height_label: "身高（公分）：",
-                weight_label: "體重（公斤）：",
-                start_game: "開始遊戲",
-                game_title: "中老年平衡感訓練遊戲",
-                difficulty_label: "遊戲難度：",
-                easy: "簡單",
-                medium: "中等",
-                hard: "困難",
-                current_score: "當前平均得分",
-                game_result_title: "遊戲結果",
-                final_score: "最終得分",
-                nutrition_advice_title: "營養建議",
-                play_again: "再玩一次",
-                stop_game: "結束遊戲"
+                other: "其他",
+                weightLabel: "体重 (公斤):",
+                heightAssumption: "*身高将默认按1.7米计算BMI。",
+                submitInfo: "提交并开始游戏",
+                gameTitle: "平衡感挑战",
+                difficultyLabel: "选择难度:",
+                difficultyHigh: "高",
+                difficultyMid: "中",
+                difficultyLow: "低",
+                averageScoreLabel: "平均得分:",
+                startButton: "开始",
+                endButton: "结束",
+                gameEndTitle: "游戏结束！",
+                finalScoreLabel: "您的最终分数是:",
+                nutritionAdviceTitle: "营养补充建议:",
+                restartButton: "再玩一次",
+                scoreHighAdvice: "恭喜！您的平衡感非常出色。请继续保持积极的生活方式，均衡饮食，多摄入富含钙、维生素D的食物（如牛奶、豆制品、鱼类）以维持骨骼健康。",
+                scoreMidAdvice: "您的表现不错！为了进一步提升平衡感，建议增加蛋白质摄入（如瘦肉、鸡蛋），并适量补充B族维生素。继续坚持锻炼，循序渐进。",
+                scoreLowAdvice: "表现有待提高，但没关系，坚持练习会有进步！建议您关注均衡营养，特别是蛋白质和维生素的摄入，并考虑在医生或营养师指导下补充。请从低难度开始，逐步增强。",
+                camAccessDenied: "无法访问摄像头。请确保您已授予本应用摄像头权限。",
+                poseLoading: "正在加载姿态检测模型...",
+                poseLoaded: "姿态检测模型加载完成！",
+                startCountdown: "游戏即将开始！",
+                playMusic: "🎵 播放音乐",
+                pauseMusic: "🔇 暂停音乐"
             },
             en: {
-                disclaimer_title: "Disclaimer",
-                disclaimer_text: "The content of this website does not constitute professional medical advice. Please choose appropriate activities based on your physical condition. The suggestions provided by this website are for reference only and do not constitute any medical advice. If you feel unwell, please seek medical attention promptly. This website will not collect your personal data or save any videos. Any information you enter on this website is only used to recommend games more suitable for you and will not be uploaded to our servers.",
-                accept: "I Agree",
-                decline: "Decline",
-                user_info_title: "Please Enter Your Basic Information",
-                age_label: "Age:",
-                gender_label: "Gender:",
-                select_gender: "Please Select",
+                disclaimerTitle: "Disclaimer",
+                disclaimerText1: "The mini-games provided on this webpage are intended to help middle-aged and elderly people adjust their sense of balance, but are not medical advice. Please be sure to choose appropriate activities based on your physical condition and doctor's guidance.",
+                disclaimerText2: "All content is for reference only and does not constitute any medical diagnosis or treatment advice. If you feel unwell, please stop the activity immediately and seek medical attention in time.",
+                disclaimerText3: "This application does not collect any personal data and does not save your video recordings. The information you enter is only used for game recommendations and will not be uploaded to the server.",
+                agreeButton: "I have read and agree",
+                userInfoTitle: "Please Provide Your Information",
+                ageLabel: "Age (Years):",
+                genderLabel: "Gender:",
+                selectGender: "Please select",
                 male: "Male",
                 female: "Female",
-                height_label: "Height (cm):",
-                weight_label: "Weight (kg):",
-                start_game: "Start Game",
-                game_title: "Balance Training Game for Seniors",
-                difficulty_label: "Game Difficulty:",
-                easy: "Easy",
-                medium: "Medium",
-                hard: "Hard",
-                current_score: "Current Average Score",
-                game_result_title: "Game Result",
-                final_score: "Final Score",
-                nutrition_advice_title: "Nutrition Advice",
-                play_again: "Play Again",
-                stop_game: "Stop Game"
+                other: "Other",
+                weightLabel: "Weight (kg):",
+                heightAssumption: "*Height will be assumed as 1.7 meters for BMI calculation.",
+                submitInfo: "Submit and Start Game",
+                gameTitle: "Balance Challenge",
+                difficultyLabel: "Select Difficulty:",
+                difficultyHigh: "High",
+                difficultyMid: "Medium",
+                difficultyLow: "Low",
+                averageScoreLabel: "Average Score:",
+                startButton: "Start",
+                endButton: "End",
+                gameEndTitle: "Game Over!",
+                finalScoreLabel: "Your final score is:",
+                nutritionAdviceTitle: "Nutritional Advice:",
+                restartButton: "Play Again",
+                scoreHighAdvice: "Congratulations! Your balance is excellent. Please continue to maintain an active lifestyle, a balanced diet, and consume foods rich in calcium and vitamin D (such as milk, soy products, fish) to maintain bone health.",
+                scoreMidAdvice: "You performed well! To further improve your balance, it is recommended to increase protein intake (such as lean meat, eggs) and appropriately supplement B vitamins. Keep exercising step by step.",
+                scoreLowAdvice: "Performance needs improvement, but it's okay, persistence will bring progress! It is recommended that you focus on balanced nutrition, especially protein and vitamin intake, and consider supplementation under the guidance of a doctor or nutritionist. Please start with a low difficulty and gradually increase.",
+                camAccessDenied: "Camera access denied. Please ensure you have granted camera permission to this application.",
+                poseLoading: "Loading pose detection model...",
+                poseLoaded: "Pose detection model loaded!",
+                startCountdown: "Game starting soon!",
+                playMusic: "🎵 Play Music",
+                pauseMusic: "🔇 Pause Music"
             }
         };
 
-        // 全域變數
-        let currentLanguage = 'zh';
-        let userInfo = {};
-        let gameState = 'stopped'; // 'stopped', 'countdown', 'playing'
-        let pose = null;
-        let camera = null;
-        let standardPoseData = [];
-        let userPoseData = [];
-        let gameStartTime = null;
-        let totalScore = 0;
-        let frameCount = 0;
-        let gameInterval = null;
+        let currentLang = 'zh'; // Default language
 
-        // 頁面加載完成後顯示免責聲明
-        window.addEventListener('load', function() {
-            document.getElementById('disclaimerModal').style.display = 'block';
-        });
-
-        // 語言切換功能
-        function changeLanguage() {
-            const select = document.getElementById('languageSelect');
-            currentLanguage = select.value;
-            updateLanguage();
-        }
-
-        function updateLanguage() {
-            const elements = document.querySelectorAll('[data-translate]');
-            elements.forEach(element => {
-                const key = element.getAttribute('data-translate');
-                if (translations[currentLanguage][key]) {
-                    element.textContent = translations[currentLanguage][key];
+        /**
+         * Updates all text elements on the page based on the current language.
+         */
+        function updateContentLanguage() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    element.textContent = translations[currentLang][key];
                 }
             });
+            // Update music button text separately as it has an emoji
+            musicToggleButton.textContent = backgroundMusic.paused ? translations[currentLang].playMusic : translations[currentLang].pauseMusic;
         }
 
-        // 免責聲明處理
-        function acceptDisclaimer() {
-            document.getElementById('disclaimerModal').style.display = 'none';
-            document.getElementById('userInfoModal').style.display = 'block';
-        }
+        // Initialize language on load
+        languageSelector.value = currentLang;
+        updateContentLanguage();
 
-        function declineDisclaimer() {
-            alert(currentLanguage === 'zh' ? '感謝您的訪問！' : 'Thank you for visiting!');
-            window.close();
-        }
-
-        // 用戶信息表單處理
-        document.getElementById('userInfoForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            userInfo = {
-                age: parseInt(formData.get('age')),
-                gender: formData.get('gender'),
-                height: parseInt(formData.get('height')),
-                weight: parseInt(formData.get('weight'))
-            };
-
-            // 計算 BMI 並設置默認難度
-            const bmi = userInfo.weight / ((userInfo.height / 100) ** 2);
-            let defaultDifficulty = 'medium';
-            
-            if (userInfo.age > 70 || bmi > 30) {
-                defaultDifficulty = 'easy';
-            } else if (bmi < 18.5 || (bmi >= 18.5 && bmi <= 24.9)) {
-                defaultDifficulty = 'hard';
-            }
-
-            document.getElementById('difficultySelect').value = defaultDifficulty;
-            document.getElementById('userInfoModal').style.display = 'none';
-            document.getElementById('gameInterface').style.display = 'block';
-            
-            // 初始化遊戲
-            initializeGame();
+        // Event listener for language selector
+        languageSelector.addEventListener('change', (event) => {
+            currentLang = event.target.value;
+            updateContentLanguage();
         });
 
-        // 遊戲初始化
-        async function initializeGame() {
+        // ================================================================
+        // Background Music Control
+        // ================================================================
+        musicToggleButton.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().then(() => {
+                    musicToggleButton.textContent = translations[currentLang].pauseMusic;
+                }).catch(error => {
+                    console.error("Failed to play music:", error);
+                    alert("无法播放音乐。您的浏览器可能阻止自动播放。请尝试手动播放。"); // Use alert only for debugging, replace with custom modal in real app
+                });
+            } else {
+                backgroundMusic.pause();
+                musicToggleButton.textContent = translations[currentLang].playMusic;
+            }
+        });
+
+
+        // ================================================================
+        // Disclaimer Modal Logic
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if disclaimer has been agreed to before
+            const disclaimerAgreed = localStorage.getItem('disclaimerAgreed');
+            if (!disclaimerAgreed) {
+                disclaimerModal.classList.remove('hidden');
+                // Initially mute music if disclaimer is shown, as user hasn't interacted yet.
+                backgroundMusic.muted = true;
+                musicToggleButton.textContent = translations[currentLang].playMusic; // Show play button
+            } else {
+                // If agreed, directly show user info page
+                showUserInfoPage();
+                // If already agreed, try to play music (still might be blocked by browser policies, user needs to click button)
+                backgroundMusic.muted = true; // Still start muted to avoid autoplay block
+                musicToggleButton.textContent = translations[currentLang].playMusic;
+            }
+        });
+
+        agreeButton.addEventListener('click', () => {
+            localStorage.setItem('disclaimerAgreed', 'true');
+            disclaimerModal.classList.add('hidden');
+            showUserInfoPage();
+            // Allow music playback after user interaction
+            backgroundMusic.muted = false; // Unmute
+            backgroundMusic.play().then(() => {
+                musicToggleButton.textContent = translations[currentLang].pauseMusic;
+            }).catch(error => {
+                console.warn("Music autoplay prevented. User needs to click play button.", error);
+                musicToggleButton.textContent = translations[currentLang].playMusic; // Ensure button shows 'play' state
+            });
+        });
+
+        /**
+         * Shows the user information collection page.
+         */
+        function showUserInfoPage() {
+            userInfoPage.classList.remove('hidden');
+            gamePage.classList.add('hidden'); // Hide game page if it was visible
+        }
+
+        // ================================================================
+        // User Information Form Logic
+        // ================================================================
+        userInfoForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            userInfo.age = parseInt(document.getElementById('age').value);
+            userInfo.gender = document.getElementById('gender').value;
+            userInfo.weight = parseFloat(document.getElementById('weight').value);
+
+            // Assuming a default height for BMI calculation
+            const assumedHeightMeters = 1.70; // 170 cm
+
+            // Calculate BMI
+            userInfo.bmi = userInfo.weight / (assumedHeightMeters * assumedHeightMeters);
+
+            // Determine default difficulty based on BMI and age
+            setDefaultDifficulty();
+
+            // Store info in session storage or global for use in game
+            sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+            sessionStorage.setItem('initialDifficulty', currentDifficulty);
+
+            // Transition to game page
+            userInfoPage.classList.add('hidden');
+            gamePage.classList.remove('hidden');
+            difficultySelector.value = currentDifficulty; // Set difficulty dropdown to default
+
+            // Initialize MediaPipe and camera once on game page load
+            initializeMediaPipe();
+        });
+
+        /**
+         * Sets the default game difficulty based on user's BMI and age.
+         */
+        function setDefaultDifficulty() {
+            const { age, bmi } = userInfo;
+
+            // Simplified age ranges for "middle-aged" based on context (M: 40-60, E: 60+)
+            const isMiddleAged = age >= 40 && age < 70;
+
+            if (age >= 70 || bmi >= 28) { // Age over 70 or obese BMI
+                currentDifficulty = 'low';
+            } else if (isMiddleAged && bmi >= 24 && bmi < 28) { // Middle-aged and overweight BMI
+                currentDifficulty = 'mid';
+            } else if (isMiddleAged && bmi >= 18.5 && bmi < 24) { // Middle-aged and normal BMI
+                currentDifficulty = 'high';
+            } else if (isMiddleAged && bmi < 18.5) { // Middle-aged and underweight BMI
+                currentDifficulty = 'high'; // Underweight can also mean less stability
+            } else { // For younger users or other edge cases, default to medium
+                currentDifficulty = 'mid';
+            }
+        }
+
+        // ================================================================
+        // MediaPipe Initialization
+        // ================================================================
+        async function initializeMediaPipe() {
+            // Display loading message
+            averageScoreDisplay.textContent = translations[currentLang].poseLoading;
+
+            pose = new Pose({
+                locateFile: (file) => {
+                    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675037146/${file}`;
+                }
+            });
+
+            pose.setOptions({
+                modelComplexity: 1, // 0 (light), 1 (medium), 2 (heavy) - adjust for performance
+                smoothLandmarks: true,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+
+            pose.onResults(onResults);
+
+            // Access user camera
             try {
-                // 初始化MediaPipe Pose
-                pose = new Pose({
-                    locateFile: (file) => {
-                        return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-                    }
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                userVideo.srcObject = stream;
+                // Wait for video to load metadata to get its dimensions
+                await new Promise((resolve) => {
+                    userVideo.onloadedmetadata = () => {
+                        resolve();
+                    };
                 });
 
-                pose.setOptions({
-                    modelComplexity: 1,
-                    smoothLandmarks: true,
-                    enableSegmentation: false,
-                    smoothSegmentation: false,
-                    minDetectionConfidence: 0.5,
-                    minTrackingConfidence: 0.5
-                });
+                // Set canvas dimensions to match video
+                poseCanvas.width = userVideo.videoWidth;
+                poseCanvas.height = userVideo.videoHeight;
 
-                pose.onResults(onPoseResults);
-
-                // 初始化攝影機
-                const videoElement = document.getElementById('userVideo');
-                camera = new Camera(videoElement, {
+                // MediaPipe Camera object helps send video frames to the pose model
+                camera = new Camera(userVideo, {
                     onFrame: async () => {
-                        if (gameState === 'playing') {
-                            await pose.send({image: videoElement});
+                        if (gameRunning) { // Only send frames when game is active
+                           await pose.send({ image: userVideo });
                         }
                     },
-                    width: 640,
-                    height: 480
+                    width: userVideo.videoWidth,
+                    height: userVideo.videoHeight
                 });
+                camera.start();
+                averageScoreDisplay.textContent = translations[currentLang].poseLoaded;
 
-                await camera.start();
-                
-                // 設置標準視頻
-                changeDifficulty();
-                
             } catch (error) {
-                console.error('遊戲初始化失敗：', error);
-                alert(currentLanguage === 'zh' ? '遊戲初始化失敗，請檢查攝影機權限' : 'Game initialization failed, please check camera permissions');
+                console.error('Error accessing camera:', error);
+                averageScoreDisplay.textContent = translations[currentLang].camAccessDenied;
+                startEndButton.disabled = true; // Disable button if camera access fails
             }
         }
 
-        // 難度切換
-        function changeDifficulty() {
-            const difficulty = document.getElementById('difficultySelect').value;
-            const standardVideo = document.getElementById('standardVideo');
-            standardVideo.src = `${difficulty}.mp4`;
+        /**
+         * Callback function for MediaPipe Pose results.
+         * @param {Object} results - The results from MediaPipe Pose.
+         */
+        function onResults(results) {
+            // Clear the canvas
+            poseCanvasCtx.clearRect(0, 0, poseCanvas.width, poseCanvas.height);
+            poseCanvasCtx.drawImage(results.image, 0, 0, poseCanvas.width, poseCanvas.height); // Draw video frame
+
+            if (results.poseLandmarks) {
+                // Draw detected landmarks and connections
+                drawConnectors(poseCanvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 4 });
+                drawLandmarks(poseCanvasCtx, results.poseLandmarks, { color: '#FF0000', lineWidth: 2 });
+
+                if (gameRunning && standardVideo.currentTime > 0) { // Ensure standard video is playing
+                    // Get user pose landmarks
+                    const userLandmarks = results.poseLandmarks;
+
+                    // Simulate standard pose landmarks for the current frame
+                    // In a real application, you'd analyze standardVideo.currentTime frame with MediaPipe
+                    // Or load pre-calculated landmarks for standard video
+                    const standardLandmarks = getSimulatedStandardPose(standardVideo.currentTime);
+
+                    if (userLandmarks && standardLandmarks) {
+                        // Calculate similarity and update score
+                        const similarity = calculatePoseSimilarity(userLandmarks, standardLandmarks);
+                        const frameScore = Math.round(similarity * 100); // Convert to 0-100
+
+                        totalScore += frameScore;
+                        frameCount++;
+                        averageScoreDisplay.textContent = Math.round(totalScore / frameCount);
+                    }
+                }
+            }
         }
 
-        // 姿態檢測結果處理
-        function onPoseResults(results) {
-            if (!results.poseLandmarks || gameState !== 'playing') return;
+        /**
+         * Function to simulate standard pose landmarks based on time or a simple predefined animation.
+         * In a real application, this would involve MediaPipe analysis of the standard video or pre-loaded data.
+         * For this demo, we'll return a simple fixed pose.
+         * @param {number} currentTime - Current time of the standard video.
+         * @returns {Array} An array of landmark objects.
+         */
+        function getSimulatedStandardPose(currentTime) {
+            // This is a placeholder. In a real application, you'd have pre-calculated
+            // pose data for your standard videos (hard.mp4, mid.mp4, easy.mp4)
+            // or perform real-time MediaPipe analysis on the standard video.
+            // For simplicity in this demo, let's just return a basic "standing" pose.
+            // A more advanced simulation could vary landmarks based on currentTime
+            // to mimic an actual exercise.
 
-            const canvas = document.getElementById('userCanvas');
-            const canvasCtx = canvas.getContext('2d');
-            const videoElement = document.getElementById('userVideo');
-            
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
-            canvas.style.display = 'block';
-            videoElement.style.display = 'none';
+            // Example: A simple "T-pose" like structure relative to center
+            const center_x = 0.5;
+            const center_y = 0.5;
+            const scale = 0.2; // Relative scale for the pose
 
-            // 清除畫布
-            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 繪製視頻幀
-            canvasCtx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            
-            // 繪製姿態點和連線
-            drawPose(canvasCtx, results.poseLandmarks);
-            
-            // 保存用戶姿態數據
-            userPoseData.push(results.poseLandmarks);
-            
-            // 計算得分
-            calculateScore();
-        }
-
-        // 繪製姿態
-        function drawPose(ctx, landmarks) {
-            // 繪製關鍵點
-            landmarks.forEach(landmark => {
-                ctx.beginPath();
-                ctx.arc(landmark.x * ctx.canvas.width, landmark.y * ctx.canvas.height, 5, 0, 2 * Math.PI);
-                ctx.fillStyle = '#00ff00';
-                ctx.fill();
-            });
-
-            // 繪製連線（簡化版）
-            const connections = [
-                [11, 12], [11, 13], [12, 14], [13, 15], [14, 16], // 上身
-                [11, 23], [12, 24], [23, 24], // 軀幹
-                [23, 25], [24, 26], [25, 27], [26, 28] // 下身
+            const simulatedPose = [
+                // Nose
+                { x: center_x, y: center_y - 0.2 * scale, z: 0, visibility: 0.99 },
+                // Left shoulder
+                { x: center_x - 0.1 * scale, y: center_y, z: 0, visibility: 0.99 },
+                // Right shoulder
+                { x: center_x + 0.1 * scale, y: center_y, z: 0, visibility: 0.99 },
+                // Left elbow
+                { x: center_x - 0.2 * scale, y: center_y, z: 0, visibility: 0.99 },
+                // Right elbow
+                { x: center_x + 0.2 * scale, y: center_y, z: 0, visibility: 0.99 },
+                // Left wrist
+                { x: center_x - 0.3 * scale, y: center_y, z: 0, visibility: 0.99 },
+                // Right wrist
+                { x: center_x + 0.3 * scale, y: center_y, z: 0, visibility: 0.99 },
+                // Left hip
+                { x: center_x - 0.05 * scale, y: center_y + 0.1 * scale, z: 0, visibility: 0.99 },
+                // Right hip
+                { x: center_x + 0.05 * scale, y: center_y + 0.1 * scale, z: 0, visibility: 0.99 },
+                // Left knee
+                { x: center_x - 0.05 * scale, y: center_y + 0.2 * scale, z: 0, visibility: 0.99 },
+                // Right knee
+                { x: center_x + 0.05 * scale, y: center_y + 0.2 * scale, z: 0, visibility: 0.99 },
+                // Left ankle
+                { x: center_x - 0.05 * scale, y: center_y + 0.3 * scale, z: 0, visibility: 0.99 },
+                // Right ankle
+                { x: center_x + 0.05 * scale, y: center_y + 0.3 * scale, z: 0, visibility: 0.99 },
+                // Add more landmarks as needed to match MediaPipe's 33 landmarks structure
             ];
 
-            ctx.strokeStyle = '#00ff00';
-            ctx.lineWidth = 2;
-            
-            connections.forEach(([start, end]) => {
-                if (landmarks[start] && landmarks[end]) {
-                    ctx.beginPath();
-                    ctx.moveTo(landmarks[start].x * ctx.canvas.width, landmarks[start].y * ctx.canvas.height);
-                    ctx.lineTo(landmarks[end].x * ctx.canvas.width, landmarks[end].y * ctx.canvas.height);
-                    ctx.stroke();
-                }
-            });
-        }
-
-        // 計算得分
-        function calculateScore() {
-            if (standardPoseData.length === 0 || userPoseData.length === 0) return;
-
-            // 獲取最新的標準姿態和用戶姿態
-            const standardPose = standardPoseData[standardPoseData.length - 1];
-            const userPose = userPoseData[userPoseData.length - 1];
-
-            if (!standardPose || !userPose) return;
-
-            // MediaPipe Pose 骨骼关节点定义（排除面部和手部细节）
-            const SKELETAL_KEYPOINTS = {
-                // 上半身主要关节点
-                LEFT_SHOULDER: 11,
-                RIGHT_SHOULDER: 12,
-                LEFT_ELBOW: 13,
-                RIGHT_ELBOW: 14,
-                LEFT_WRIST: 15,
-                RIGHT_WRIST: 16,
-                // 下半身主要关节点
-                LEFT_HIP: 23,
-                RIGHT_HIP: 24,
-                LEFT_KNEE: 25,
-                RIGHT_KNEE: 26,
-                LEFT_ANKLE: 27,
-                RIGHT_ANKLE: 28,
-                LEFT_HEEL: 29,
-                RIGHT_HEEL: 30,
-                LEFT_FOOT_INDEX: 31,
-                RIGHT_FOOT_INDEX: 32
-            };
-
-            // 关键点权重配置（不同关节点的重要性不同）
-            const KEYPOINT_WEIGHTS = {
-                // 核心关节点权重更高
-                [SKELETAL_KEYPOINTS.LEFT_SHOULDER]: 1.2,
-                [SKELETAL_KEYPOINTS.RIGHT_SHOULDER]: 1.2,
-                [SKELETAL_KEYPOINTS.LEFT_HIP]: 1.2,
-                [SKELETAL_KEYPOINTS.RIGHT_HIP]: 1.2,
-                // 肘部和膝盖权重中等
-                [SKELETAL_KEYPOINTS.LEFT_ELBOW]: 1.0,
-                [SKELETAL_KEYPOINTS.RIGHT_ELBOW]: 1.0,
-                [SKELETAL_KEYPOINTS.LEFT_KNEE]: 1.0,
-                [SKELETAL_KEYPOINTS.RIGHT_KNEE]: 1.0,
-                // 手腕和脚踝权重较低
-                [SKELETAL_KEYPOINTS.LEFT_WRIST]: 0.8,
-                [SKELETAL_KEYPOINTS.RIGHT_WRIST]: 0.8,
-                [SKELETAL_KEYPOINTS.LEFT_ANKLE]: 0.8,
-                [SKELETAL_KEYPOINTS.RIGHT_ANKLE]: 0.8,
-                // 脚部关键点权重最低
-                [SKELETAL_KEYPOINTS.LEFT_HEEL]: 0.6,
-                [SKELETAL_KEYPOINTS.RIGHT_HEEL]: 0.6,
-                [SKELETAL_KEYPOINTS.LEFT_FOOT_INDEX]: 0.6,
-                [SKELETAL_KEYPOINTS.RIGHT_FOOT_INDEX]: 0.6
-            };
-
-            let totalWeightedSimilarity = 0;
-            let totalWeight = 0;
-
-            // 遍历所有骨骼关节点
-            Object.values(SKELETAL_KEYPOINTS).forEach(pointIndex => {
-                const standardPoint = standardPose[pointIndex];
-                const userPoint = userPose[pointIndex];
-                
-                // 检查关键点是否存在且可见度足够
-                if (standardPoint && userPoint && 
-                    standardPoint.visibility > 0.5 && userPoint.visibility > 0.5) {
-                    
-                    // 计算 3D 欧几里得距离
-                    const distance = Math.sqrt(
-                        Math.pow(standardPoint.x - userPoint.x, 2) +
-                        Math.pow(standardPoint.y - userPoint.y, 2) +
-                        Math.pow(standardPoint.z - userPoint.z, 2)
-                    );
-                    
-                    // 将距离转换为相似度分数 (0-100)
-                    // 使用指数衰减函数，使得小距离获得更高分数
-                    const similarity = 100 * Math.exp(-distance * 5);
-                    
-                    // 应用权重
-                    const weight = KEYPOINT_WEIGHTS[pointIndex] || 1.0;
-                    totalWeightedSimilarity += similarity * weight;
-                    totalWeight += weight;
-                }
-            });
-
-            if (totalWeight > 0) {
-                const frameScore = totalWeightedSimilarity / totalWeight;
-                totalScore += frameScore;
-                frameCount++;
-                
-                // 更新显示的平均得分
-                const averageScore = Math.round(totalScore / frameCount);
-                document.getElementById('currentScore').textContent = averageScore;
+            // MediaPipe returns 33 landmarks. Ensure the simulated data matches this length for robust comparison.
+            // For a basic demo, we'll pad with dummy data if necessary, or simplify comparison.
+            // For robust comparison, you would map relevant landmarks for your specific exercise.
+            // Example: Only compare key joints for balance, e.g., hips, knees, ankles.
+            while (simulatedPose.length < 33) {
+                simulatedPose.push({ x: 0, y: 0, z: 0, visibility: 0 });
             }
+
+            return simulatedPose.slice(0, 33); // Ensure it's exactly 33 landmarks
         }
-        
-        // 遊戲控制
-        function toggleGame() {
-            if (gameState === 'stopped') {
+
+
+        /**
+         * Calculates cosine similarity between two sets of pose landmarks.
+         * Only compares a subset of key landmarks relevant for balance (hips, knees, ankles).
+         * @param {Array} userLandmarks - Array of landmark objects from user.
+         * @param {Array} standardLandmarks - Array of landmark objects from standard pose.
+         * @returns {number} Cosine similarity (0-1).
+         */
+        function calculatePoseSimilarity(userLandmarks, standardLandmarks) {
+            // Define key landmarks for balance comparison (e.g., hips, knees, ankles)
+            // MediaPipe Pose landmarks indices:
+            // 23: Left hip, 24: Right hip
+            // 25: Left knee, 26: Right knee
+            // 27: Left ankle, 28: Right ankle
+            const keyLandmarkIndices = [
+                // POSE_LANDMARKS.LEFT_HIP.value, POSE_LANDMARKS.RIGHT_HIP.value,
+                // POSE_LANDMARKS.LEFT_KNEE.value, POSE_LANDMARKS.RIGHT_KNEE.value,
+                // POSE_LANDMARKS.LEFT_ANKLE.value, POSE_LANDMARKS.RIGHT_ANKLE.value,
+                23, 24, 25, 26, 27, 28
+            ];
+
+            let userVector = [];
+            let standardVector = [];
+
+            // Extract relevant landmark coordinates and normalize them relative to hips for scale invariance
+            // Find hip center to normalize
+            const userHipX = (userLandmarks[23].x + userLandmarks[24].x) / 2;
+            const userHipY = (userLandmarks[23].y + userLandmarks[24].y) / 2;
+            const standardHipX = (standardLandmarks[23].x + standardLandmarks[24].x) / 2;
+            const standardHipY = (standardLandmarks[23].y + standardLandmarks[24].y) / 2;
+
+
+            keyLandmarkIndices.forEach(idx => {
+                const userLm = userLandmarks[idx];
+                const standardLm = standardLandmarks[idx];
+
+                // Ensure landmarks are visible enough for comparison
+                if (userLm.visibility > 0.6 && standardLm.visibility > 0.6) {
+                    // Use relative coordinates to hip center
+                    userVector.push(userLm.x - userHipX, userLm.y - userHipY);
+                    standardVector.push(standardLm.x - standardHipX, standardLm.y - standardHipY);
+                    // Could also include Z or define bone vectors
+                }
+            });
+
+            if (userVector.length === 0 || standardVector.length === 0) {
+                return 0; // Cannot compare if no valid landmarks
+            }
+
+            // Calculate Dot Product
+            let dotProduct = 0;
+            for (let i = 0; i < userVector.length; i++) {
+                dotProduct += userVector[i] * standardVector[i];
+            }
+
+            // Calculate Magnitude of each vector
+            let magnitudeUser = 0;
+            for (let i = 0; i < userVector.length; i++) {
+                magnitudeUser += userVector[i] * userVector[i];
+            }
+            magnitudeUser = Math.sqrt(magnitudeUser);
+
+            let magnitudeStandard = 0;
+            for (let i = 0; i < standardVector.length; i++) {
+                magnitudeStandard += standardVector[i] * standardVector[i];
+            }
+            magnitudeStandard = Math.sqrt(magnitudeStandard);
+
+            // Calculate Cosine Similarity
+            if (magnitudeUser === 0 || magnitudeStandard === 0) {
+                return 0; // Avoid division by zero
+            }
+
+            let similarity = dotProduct / (magnitudeUser * magnitudeStandard);
+
+            // Clamp similarity to [0, 1] as it can sometimes be slightly outside due to floating point
+            // and we want it to represent a positive match. -1 to 1 range is natural for cosine,
+            // but for "similarity" often normalized to 0-1 for scores.
+            similarity = Math.max(0, similarity); // Ensure non-negative
+            similarity = Math.min(1, similarity); // Ensure not greater than 1
+
+            return similarity;
+        }
+
+        // ================================================================
+        // Game Flow Logic
+        // ================================================================
+
+        /**
+         * Handles the start/end button click.
+         */
+        startEndButton.addEventListener('click', () => {
+            if (!gameRunning) {
                 startGame();
             } else {
-                stopGame();
+                endGame();
             }
-        }
+        });
 
+        /**
+         * Starts the game countdown and then the game.
+         */
         function startGame() {
-            gameState = 'countdown';
-            const btn = document.getElementById('gameControlBtn');
-            btn.disabled = true;
-            btn.textContent = currentLanguage === 'zh' ? '準備中...' : 'Preparing...';
-            
-            // 重置遊戲數據
-            standardPoseData = [];
-            userPoseData = [];
+            startEndButton.disabled = true; // Disable button during countdown
+            countdownOverlay.classList.remove('hidden');
+            countdownValue = 3;
+            countdownOverlay.textContent = countdownValue;
+            averageScoreDisplay.textContent = '0'; // Reset score display
             totalScore = 0;
             frameCount = 0;
-            document.getElementById('currentScore').textContent = '0';
-            
-            // 開始倒數
-            startCountdown();
-        }
 
-        function startCountdown() {
-            const countdownElement = document.getElementById('countdown');
-            countdownElement.style.display = 'block';
-            let count = 3;
-            
-            const countdownInterval = setInterval(() => {
-                countdownElement.textContent = count;
-                count--;
-                
-                if (count < 0) {
+            // Load and play standard video based on current difficulty
+            standardVideo.src = standardVideoSources[difficultySelector.value];
+            standardVideo.load(); // Load the new source
+
+            // Countdown timer
+            countdownInterval = setInterval(() => {
+                countdownValue--;
+                if (countdownValue > 0) {
+                    countdownOverlay.textContent = countdownValue;
+                } else {
                     clearInterval(countdownInterval);
-                    countdownElement.style.display = 'none';
-                    startActualGame();
+                    countdownOverlay.classList.add('hidden');
+                    startEndButton.disabled = false; // Re-enable button
+                    startEndButton.textContent = translations[currentLang].endButton;
+                    gameRunning = true;
+                    standardVideo.play(); // Start standard video playback
+                    // Start MediaPipe analysis (camera.start() is already called in initMediaPipe)
+                    // The onFrame callback will now send frames because gameRunning is true
                 }
             }, 1000);
+            averageScoreDisplay.textContent = translations[currentLang].startCountdown;
         }
 
-        function startActualGame() {
-            gameState = 'playing';
-            gameStartTime = Date.now();
-            
-            const btn = document.getElementById('gameControlBtn');
-            btn.disabled = false;
-            btn.textContent = currentLanguage === 'zh' ? '結束遊戲' : 'Stop Game';
-            
-            // 開始播放標準視頻
-            const standardVideo = document.getElementById('standardVideo');
-            standardVideo.style.display = 'block';
-            standardVideo.currentTime = 0;
-            standardVideo.play();
-            
-            // 監聽標準視頻結束
-            standardVideo.onended = () => {
-                stopGame();
-            };
-            
-            // 開始分析標準視頻（簡化版 - 實際應用中需要更複雜的實現）
-            simulateStandardPoseData();
-        }
+        /**
+         * Ends the game and displays results.
+         */
+        function endGame() {
+            gameRunning = false;
+            startEndButton.textContent = translations[currentLang].startButton;
+            standardVideo.pause(); // Pause standard video
+            standardVideo.currentTime = 0; // Reset standard video
+            clearInterval(countdownInterval); // Clear any lingering countdown
+            countdownOverlay.classList.add('hidden'); // Ensure countdown is hidden
 
-        function simulateStandardPoseData() {
-            // 這裡應該分析標準視頻的每一幀
-            // 為了演示，我們生成一些模擬數據
-            gameInterval = setInterval(() => {
-                if (gameState === 'playing') {
-                    // 生成模擬的標準姿態數據
-                    const mockStandardPose = generateMockPoseData();
-                    standardPoseData.push(mockStandardPose);
-                }
-            }, 100); // 每 100ms 生成一次數據
-        }
-
-        function generateMockPoseData() {
-            // 生成 33 個關鍵點的模擬數據
-            const pose = [];
-            for (let i = 0; i < 33; i++) {
-                pose.push({
-                    x: Math.random() * 0.6 + 0.2, // 0.2 到 0.8 之間
-                    y: Math.random() * 0.6 + 0.2,
-                    z: Math.random() * 0.2 - 0.1,
-                    visibility: Math.random() * 0.5 + 0.5
-                });
-            }
-            return pose;
-        }
-
-        function stopGame() {
-            gameState = 'stopped';
-            
-            if (gameInterval) {
-                clearInterval(gameInterval);
-                gameInterval = null;
-            }
-            
-            const btn = document.getElementById('gameControlBtn');
-            btn.disabled = false;
-            btn.textContent = currentLanguage === 'zh' ? '開始遊戲' : 'Start Game';
-            
-            // 停止標準視頻
-            const standardVideo = document.getElementById('standardVideo');
-            standardVideo.style.display = 'none';
-            standardVideo.pause();
-            
-            // 顯示用戶視頻
-            document.getElementById('userVideo').style.display = 'block';
-            document.getElementById('userCanvas').style.display = 'none';
-            
-            // 顯示遊戲結果
-            showGameResult();
-        }
-
-        function showGameResult() {
+            // Calculate final average score
             const finalScore = frameCount > 0 ? Math.round(totalScore / frameCount) : 0;
-            document.getElementById('finalScore').textContent = finalScore;
-            
-            // 生成營養建議
-            const nutritionAdvice = generateNutritionAdvice(finalScore);
-            document.getElementById('nutritionAdviceText').textContent = nutritionAdvice;
-            
-            document.getElementById('gameResultModal').style.display = 'block';
+            finalScoreDisplay.textContent = finalScore;
+
+            // Provide nutritional advice based on score
+            if (finalScore >= 80) {
+                nutritionAdvice.textContent = translations[currentLang].scoreHighAdvice;
+            } else if (finalScore >= 60) {
+                nutritionAdvice.textContent = translations[currentLang].scoreMidAdvice;
+            } else {
+                nutritionAdvice.textContent = translations[currentLang].scoreLowAdvice;
+            }
+
+            // Show game end modal
+            gameEndModal.classList.remove('hidden');
         }
 
-        function generateNutritionAdvice(score) {
-            const adviceZh = {
-                high: "您的動作標準程度很高！建議繼續保持均衡飲食，多攝取富含蛋白質的食物如魚類、豆類，以及新鮮蔬菜水果。適量補充維生素 D 和鈣質，有助於骨骼健康。",
-                medium: "您的動作標準程度中等，建議加強營養攝取。多吃富含 omega-3 脂肪酸的食物如深海魚、堅果，增加蛋白質攝取，適量補充維生素 B 群和鎂元素，有助於肌肉功能。",
-                low: "建議加強營養補充，多攝取優質蛋白質如瘦肉、雞蛋、乳製品，增加維生素 C 和 E 的攝取，多吃抗氧化食物如藍莓、綠茶。建議諮詢營養師制定個人化飲食計畫。"
-            };
-            
-            const adviceEn = {
-                high: "Your movement accuracy is excellent! Continue maintaining a balanced diet with protein-rich foods like fish and legumes, plus fresh vegetables and fruits. Adequate vitamin D and calcium supplementation helps bone health.",
-                medium: "Your movement accuracy is moderate. Strengthen nutrition intake with omega-3 rich foods like deep-sea fish and nuts, increase protein intake, and supplement with vitamin B complex and magnesium for muscle function.",
-                low: "Recommend strengthening nutritional supplementation with high-quality proteins like lean meat, eggs, and dairy products. Increase vitamin C and E intake with antioxidant foods like blueberries and green tea. Consider consulting a nutritionist for a personalized diet plan."
-            };
-            
-            const advice = currentLanguage === 'zh' ? adviceZh : adviceEn;
-            
-            if (score >= 80) return advice.high;
-            if (score >= 60) return advice.medium;
-            return advice.low;
-        }
+        /**
+         * Restart button in game end modal.
+         */
+        restartButton.addEventListener('click', () => {
+            gameEndModal.classList.add('hidden');
+            // Reset game state for a new round
+            averageScoreDisplay.textContent = '0';
+            totalScore = 0;
+            frameCount = 0;
+        });
 
-        function restartGame() {
-            document.getElementById('gameResultModal').style.display = 'none';
-            document.getElementById('userInfoModal').style.display = 'block';
-        }
+        // Event listener for when standard video ends
+        standardVideo.addEventListener('ended', () => {
+            if (gameRunning) { // Ensure game is actually active
+                endGame();
+            }
+        });
 
-        // 初始化語言
-        updateLanguage();
+        // Initialize user info and difficulty if coming back from game page (e.g., refresh)
+        // This is a basic way to persist state in a single HTML file.
+        const storedUserInfo = sessionStorage.getItem('userInfo');
+        const storedInitialDifficulty = sessionStorage.getItem('initialDifficulty');
+        if (storedUserInfo && storedInitialDifficulty) {
+            userInfo = JSON.parse(storedUserInfo);
+            currentDifficulty = storedInitialDifficulty;
+            difficultySelector.value = currentDifficulty;
+            // Directly show game page if user info is already present
+            userInfoPage.classList.add('hidden');
+            gamePage.classList.remove('hidden');
+            initializeMediaPipe(); // Initialize MediaPipe once game page is shown
+        }
     </script>
 </body>
-</html> 
+</html>
